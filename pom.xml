@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.3</version>
+	</parent>
+	
+	<groupId>fr.aredli.registrix</groupId>
+	<artifactId>registrix</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<name>RegistriX</name>
+	<description>RegistriX is an ORMS to help organization to implement an Online Registration System</description>
+	
+	<modules>
+		<module>business</module>
+		<module>common</module>
+		<module>common-test</module>
+	</modules>
+	
+	<organization>
+		<name>Aredli'Corp</name>
+	</organization>
+	
+	<developers>
+		<developer>
+			<name>Lempereur Corentin</name>
+			<organization>Aredli'Corp</organization>
+			<email>corentin.lempereur16@gmail.com</email>
+			<url>https://aredli16.github.io/my-portfolio/</url>
+			<roles>
+				<role>CEO</role>
+			</roles>
+		</developer>
+	</developers>
+	
+	<properties>
+		<java.version>21</java.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring-cloud.version>2023.0.0</spring-cloud.version>
+		<modelmapper.version>3.2.0</modelmapper.version>
+		<testcontainers-keycloak.version>3.2.0</testcontainers-keycloak.version>
+		<javafaker.version>1.0.2</javafaker.version>
+	</properties>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>${modelmapper.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.dasniko</groupId>
+				<artifactId>testcontainers-keycloak</artifactId>
+				<version>${testcontainers-keycloak.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.javafaker</groupId>
+				<artifactId>javafaker</artifactId>
+				<version>${javafaker.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

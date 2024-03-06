@@ -1,0 +1,33 @@
+{
+  "name": "registrix",
+  "description": "RegistriX is an ORMS to help organization to implement an Online Registration System",
+  "version": "1.0.0",
+  "author": "Lempereur Corentin <73390812+aredli16@users.noreply.github.com>",
+  "repository": "https://github.com/Aredli16/RegistriX",
+  "packageManager": "yarn@1.22.4",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "backoffice",
+    "client",
+    "common"
+  ],
+  "scripts": {
+    "dev:client": "yarn workspace client dev",
+    "dev:backoffice": "yarn workspace backoffice dev",
+    "dev": "concurrently \"yarn dev:client\" \"yarn dev:backoffice\"",
+    "lint:client": "yarn workspace client lint",
+    "lint:backoffice": "yarn workspace backoffice lint",
+    "lint": "concurrently \"yarn lint:client\" \"yarn lint:backoffice\"",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.1.3",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.2"
+  }
+}

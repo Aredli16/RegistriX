@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  database:
+    image: postgres:16.2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: "pg_isready -U postgres || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - registrix:/var/lib/postgresql/data
+      - ./database-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    command: start-dev --import-realm
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./registrix-realm.json:/opt/keycloak/data/import/registrix-realm.json
+    environment:
+      KC_HTTP_PORT: 8000
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: database
+      KC_SCHEMA: keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_HEALTH_ENABLED: true
+    depends_on:
+      database:
+        condition: service_healthy
+
+volumes:
+  registrix:
