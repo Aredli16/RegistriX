@@ -13,13 +13,20 @@
     "common"
   ],
   "scripts": {
+    "build:business": "./mvnw clean install",
+    "build:client": "yarn workspace client build",
+    "build:backoffice": "yarn workspace backoffice build",
+    "build": "concurrently \"yarn build:business\" \"yarn build:client\" \"yarn build:backoffice\"",
     "dev:client": "yarn workspace client dev",
     "dev:backoffice": "yarn workspace backoffice dev",
     "dev": "concurrently \"yarn dev:client\" \"yarn dev:backoffice\"",
     "lint:client": "yarn workspace client lint",
     "lint:backoffice": "yarn workspace backoffice lint",
     "lint": "concurrently \"yarn lint:client\" \"yarn lint:backoffice\"",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:business": "./mvnw clean test",
+    "deploy:business": "./mvnw clean deploy",
+    "deploy": "concurrently \"yarn deploy:business\""
   },
   "devDependencies": {
     "@types/node": "^20.11.25",

@@ -22,6 +22,7 @@
 	<properties>
 		<docker.image.prefix>ghcr.io/aredli16</docker.image.prefix>
 		<docker.image.name>${docker.image.prefix}/${project.artifactId}</docker.image.name>
+		<docker.image.label>https://github.com/aredli16/RegistriX</docker.image.label>
 	</properties>
 	
 	<build>
@@ -47,6 +48,11 @@
 					</from>
 					<container>
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+						<labels>
+							<org.opencontainers.image.source>
+								${docker.image.label}
+							</org.opencontainers.image.source>
+						</labels>
 					</container>
 				</configuration>
 				<executions>
