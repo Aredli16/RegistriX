@@ -31,6 +31,7 @@
     "docker:build:business": "./mvnw clean package",
     "docker:build:client": "docker compose --profile prod build client && node scripts/docker/docker-tag-client.js",
     "docker:build:backoffice": "docker compose --profile prod build backoffice && node scripts/docker/docker-tag-backoffice.js",
+    "docker:build": "concurrently \"yarn docker:build:business\" \"yarn docker:build:client\" \"yarn docker:build:backoffice\"",
     "start:client": "yarn workspace client start",
     "start:backoffice": "yarn workspace backoffice start",
     "start": "docker compose --profile prod up -d",

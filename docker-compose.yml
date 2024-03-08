@@ -105,6 +105,13 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    environment:
+      KEYCLOAK_CLIENT_ID: backoffice
+      KEYCLOAK_CLIENT_SECRET: GYYZ51JlcqTQ9pmQOKJaY72KqMFhP0Il
+      KEYCLOAK_ISSUER: http://keycloak:8000/realms/registrix
+      NEXTAUTH_SECRET: 3d2f2b2c-1b1a-4f5a-8b1a-2b1a1b1a1b1a
+      NEXTAUTH_URL: http://localhost:3000
+      API_URL: http://gateway:8080
     profiles:
       - prod
     depends_on:
@@ -119,11 +126,18 @@ services:
     restart: always
     ports:
       - "3001:3000"
+    environment:
+      KEYCLOAK_CLIENT_ID: client
+      KEYCLOAK_CLIENT_SECRET: WMTcEah9HONlMZMqF5Eojl3X7GZ44R1G
+      KEYCLOAK_ISSUER: http://keycloak:8000/realms/registrix
+      NEXTAUTH_SECRET: 3d2f2b2c-1b1a-4f5a-8b1a-2b1a1b1a1b1a
+      NEXTAUTH_URL: http://localhost:3001
+      API_URL: http://gateway:8080
     profiles:
       - prod
     depends_on:
       gateway:
         condition: service_healthy
-          
+
 volumes:
   registrix:
