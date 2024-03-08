@@ -41,5 +41,89 @@ services:
       database:
         condition: service_healthy
 
+  discovery:
+    image: ghcr.io/aredli16/discovery:1.0.0-SNAPSHOT
+    restart: always
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    healthcheck:
+      test: "curl --fail --silent localhost:8761/actuator/health | grep UP || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    profiles:
+      - dev
+      - prod
+
+  gateway:
+    image: ghcr.io/aredli16/gateway:1.0.0-SNAPSHOT
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health | grep UP || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      discovery:
+        condition: service_healthy
+      registration:
+        condition: service_healthy
+    profiles:
+      - dev
+      - prod
+
+  registration:
+    image: ghcr.io/aredli16/registration:1.0.0-SNAPSHOT
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    healthcheck:
+      test: "curl --fail --silent localhost:8081/actuator/health | grep UP || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      discovery:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    profiles:
+      - dev
+      - prod
+
+  backoffice:
+    image: ghcr.io/aredli16/backoffice:latest
+    build:
+      context: .
+      dockerfile: ./docker/backoffice/Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    profiles:
+      - prod
+    depends_on:
+      gateway:
+        condition: service_healthy
+
+  client:
+    image: ghcr.io/aredli16/client:latest
+    build:
+      context: .
+      dockerfile: ./docker/client/Dockerfile
+    restart: always
+    ports:
+      - "3001:3000"
+    profiles:
+      - prod
+    depends_on:
+      gateway:
+        condition: service_healthy
+          
 volumes:
   registrix:

@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "1.0.0",
+  "version": "1.0.0-SNAPSHOT",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "common": "1.0.0",
+    "common": "1.0.0-SNAPSHOT",
     "react": "^18",
     "react-dom": "^18",
     "next": "14.1.3"
