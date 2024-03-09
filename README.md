@@ -74,7 +74,7 @@ The deployment uses Docker to publish an image that represents an instance of ea
   yarn deploy
 ```
 
-Le pipeline GitHub s'occupe déjà de déployer les images à chaque commit.
+The GitHub pipeline already takes care of deploying images with each commit.
 ## Authors
 
 - [@Aredli16](https://www.github.com/Aredli16)
