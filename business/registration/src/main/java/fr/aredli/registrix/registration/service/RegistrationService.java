@@ -1,5 +1,7 @@
-package fr.aredli.registrix.registration;
+package fr.aredli.registrix.registration.service;
 
+import fr.aredli.registrix.common.notification.RegistrationNotification;
+import fr.aredli.registrix.common.notification.RegistrationNotification.Type;
 import fr.aredli.registrix.registration.dto.request.RegistrationCreateRequest;
 import fr.aredli.registrix.registration.dto.request.RegistrationUpdateRequest;
 import fr.aredli.registrix.registration.dto.response.RegistrationPageResponse;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RegistrationService {
 	private final RegistrationRepository repository;
+	private final KafkaTemplate<String, RegistrationNotification> kafkaTemplate;
 	
 	public RegistrationPageResponse findAll(int page, int size, String sortBy, String sortDirection) {
 		Page<Registration> registrations = repository.findAll(PageRequest.of(page, size).withSort(Sort.by(Direction.fromString(sortDirection), sortBy)));
@@ -41,7 +45,11 @@ public class RegistrationService {
 		
 		registration.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
 		
-		return RegistrationMapper.mapEntityToDTO(repository.save(registration));
+		registration = repository.save(registration);
+		
+		kafkaTemplate.send("registration", new RegistrationNotification(registration.getId(), SecurityContextHolder.getContext().getAuthentication().getName(), Type.CREATED));
+		
+		return RegistrationMapper.mapEntityToDTO(registration);
 	}
 	
 	public RegistrationResponse update(String id, RegistrationUpdateRequest request) {

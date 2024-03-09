@@ -28,14 +28,6 @@ public abstract class ContainerTest {
 	protected static final String KEYCLOAK_CONTAINER_USER_PASSWORD = "user";
 	
 	static {
-		POSTGRE_SQL_CONTAINER
-				.withLogConsumer(new Slf4jLogConsumer(log))
-				.withDatabaseName("registration")
-				.withUsername("postgres")
-				.withPassword("postgres")
-				.withReuse(true)
-				.start();
-		
 		KEYCLOAK_CONTAINER
 				.withLogConsumer(new Slf4jLogConsumer(log))
 				.withRealmImportFile("keycloak/realm.json")
@@ -43,8 +35,21 @@ public abstract class ContainerTest {
 				.start();
 	}
 	
+	protected final String databaseName;
 	@Autowired
 	private TestRestTemplate restTemplate;
+	
+	protected ContainerTest(String databaseName) {
+		this.databaseName = databaseName;
+		
+		POSTGRE_SQL_CONTAINER
+				.withLogConsumer(new Slf4jLogConsumer(log))
+				.withDatabaseName(databaseName)
+				.withUsername("postgres")
+				.withPassword("postgres")
+				.withReuse(true)
+				.start();
+	}
 	
 	@DynamicPropertySource
 	static void postgresqlProperties(DynamicPropertyRegistry registry) {

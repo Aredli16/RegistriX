@@ -1,10 +1,10 @@
 package fr.aredli.registrix.registration.controller;
 
-import fr.aredli.registrix.registration.RegistrationService;
 import fr.aredli.registrix.registration.dto.request.RegistrationCreateRequest;
 import fr.aredli.registrix.registration.dto.request.RegistrationUpdateRequest;
 import fr.aredli.registrix.registration.dto.response.RegistrationPageResponse;
 import fr.aredli.registrix.registration.dto.response.RegistrationResponse;
+import fr.aredli.registrix.registration.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

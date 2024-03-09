@@ -11,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RegistrationControllerNoAuthSecurityTest extends ContainerTest {
+	protected RegistrationControllerNoAuthSecurityTest() {
+		super("registration");
+	}
+	
 	@Test
 	void getAll() {
 		ResponseEntity<Void> response = getWithoutAuth("/registration", Void.class);

@@ -24,6 +24,10 @@ class RegistrationControllerTest extends ContainerTest {
 	@Autowired
 	private RegistrationRepository registrationRepository;
 	
+	protected RegistrationControllerTest() {
+		super("registration");
+	}
+	
 	@AfterEach
 	void tearDown() {
 		registrationRepository.deleteAll();
