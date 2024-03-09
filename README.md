@@ -14,6 +14,7 @@ RegistriX is an application allowing an organization to manage its registrations
 ## Installation
 
 This project uses Java 21, NodeJS 20, Yarn 1.22 and Docker
+
 Once these dependencies are installed, run the commands:
 
 ```bash
