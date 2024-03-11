@@ -26,6 +26,8 @@ public abstract class ContainerTest {
 	protected static final String KEYCLOAK_CONTAINER_ADMIN_PASSWORD = "admin";
 	protected static final String KEYCLOAK_CONTAINER_USER_USERNAME = "user";
 	protected static final String KEYCLOAK_CONTAINER_USER_PASSWORD = "user";
+	protected static final String KEYCLOAK_CONTAINER_ADMIN_EMAIL = "admin@admin.com";
+	protected static final String KEYCLOAK_CONTAINER_USER_EMAIL = "user@user.com";
 	
 	static {
 		KEYCLOAK_CONTAINER

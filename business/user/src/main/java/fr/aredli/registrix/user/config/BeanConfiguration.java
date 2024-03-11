@@ -1,5 +1,6 @@
 package fr.aredli.registrix.user.config;
 
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.modelmapper.ModelMapper;
@@ -17,15 +18,21 @@ public class BeanConfiguration {
 	private String keycloakClientId;
 	@Value("${keycloak.client-secret}")
 	private String keycloakClientSecret;
+	@Value("${keycloak.admin-username}")
+	private String keycloakAdminUsername;
+	@Value("${keycloak.admin-password}")
+	private String keycloakAdminPassword;
 	
 	@Bean
 	public Keycloak keycloak() {
 		return KeycloakBuilder.builder()
-				.serverUrl("http://keycloak:8000")
-				.realm("master")
-				.grantType("client_credentials")
-				.clientId("admin-cli")
-				.clientSecret("dbqgJPVZqt1FGUzhckZIB5hRHEJ2qyrJ")
+				.serverUrl(keycloakServerUrl)
+				.realm(keycloakRealm)
+				.grantType(OAuth2Constants.PASSWORD)
+				.clientId(keycloakClientId)
+				.clientSecret(keycloakClientSecret)
+				.username(keycloakAdminUsername)
+				.password(keycloakAdminPassword)
 				.build();
 	}
 	
