@@ -23,7 +23,7 @@
     "dev:business": "docker compose --profile dev up -d",
     "dev:client": "yarn workspace client dev",
     "dev:backoffice": "yarn workspace backoffice dev",
-    "dev": "concurrently \"yarn dev:client\" \"yarn dev:backoffice\"",
+    "dev": "concurrently \"yarn dev:business\" \"yarn dev:client\" \"yarn dev:backoffice\"",
     "build:business": "./mvnw clean install",
     "build:client": "yarn workspace client build",
     "build:backoffice": "yarn workspace backoffice build",

@@ -13,8 +13,10 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.utility.DockerImageName;
 
 @Slf4j
 public abstract class ContainerTest {
@@ -22,20 +24,13 @@ public abstract class ContainerTest {
 	protected static final String KEYCLOAK_CONTAINER_USER_USERID = "9a287f3b-49b0-4965-b5f6-e9b437dfc243";
 	protected static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:16.2");
 	protected static final KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer("quay.io/keycloak/keycloak:23.0");
+	protected static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
 	protected static final String KEYCLOAK_CONTAINER_ADMIN_USERNAME = "admin";
 	protected static final String KEYCLOAK_CONTAINER_ADMIN_PASSWORD = "admin";
 	protected static final String KEYCLOAK_CONTAINER_USER_USERNAME = "user";
 	protected static final String KEYCLOAK_CONTAINER_USER_PASSWORD = "user";
 	protected static final String KEYCLOAK_CONTAINER_ADMIN_EMAIL = "admin@admin.com";
 	protected static final String KEYCLOAK_CONTAINER_USER_EMAIL = "user@user.com";
-	
-	static {
-		KEYCLOAK_CONTAINER
-				.withLogConsumer(new Slf4jLogConsumer(log))
-				.withRealmImportFile("keycloak/realm.json")
-				.withReuse(true)
-				.start();
-	}
 	
 	protected final String databaseName;
 	@Autowired
@@ -51,14 +46,29 @@ public abstract class ContainerTest {
 				.withPassword("postgres")
 				.withReuse(true)
 				.start();
+		
+		KEYCLOAK_CONTAINER
+				.withLogConsumer(new Slf4jLogConsumer(log))
+				.withAdminUsername(KEYCLOAK_CONTAINER_ADMIN_USERNAME)
+				.withAdminPassword(KEYCLOAK_CONTAINER_ADMIN_PASSWORD)
+				.withRealmImportFile("keycloak/realm.json")
+				.withReuse(true)
+				.start();
+		
+		KAFKA_CONTAINER
+				.withLogConsumer(new Slf4jLogConsumer(log))
+				.start();
 	}
 	
 	@DynamicPropertySource
-	static void postgresqlProperties(DynamicPropertyRegistry registry) {
+	static void registerProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", POSTGRE_SQL_CONTAINER::getJdbcUrl);
 		registry.add("spring.datasource.password", POSTGRE_SQL_CONTAINER::getPassword);
 		registry.add("spring.datasource.username", POSTGRE_SQL_CONTAINER::getUsername);
 		registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> KEYCLOAK_CONTAINER.getAuthServerUrl() + "/realms/test");
+		registry.add("spring.kafka.bootstrap-servers", KAFKA_CONTAINER::getBootstrapServers);
+		registry.add("keycloak.server-url", KEYCLOAK_CONTAINER::getAuthServerUrl);
+		registry.add("keycloak.realm", () -> "test");
 	}
 	
 	protected String getAccessToken(String username, String password) {

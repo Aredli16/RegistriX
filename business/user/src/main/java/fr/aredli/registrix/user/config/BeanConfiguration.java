@@ -16,8 +16,6 @@ public class BeanConfiguration {
 	private String keycloakRealm;
 	@Value("${keycloak.client-id}")
 	private String keycloakClientId;
-	@Value("${keycloak.client-secret}")
-	private String keycloakClientSecret;
 	@Value("${keycloak.admin-username}")
 	private String keycloakAdminUsername;
 	@Value("${keycloak.admin-password}")
@@ -30,7 +28,6 @@ public class BeanConfiguration {
 				.realm(keycloakRealm)
 				.grantType(OAuth2Constants.PASSWORD)
 				.clientId(keycloakClientId)
-				.clientSecret(keycloakClientSecret)
 				.username(keycloakAdminUsername)
 				.password(keycloakAdminPassword)
 				.build();
