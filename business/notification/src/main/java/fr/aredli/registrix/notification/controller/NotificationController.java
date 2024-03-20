@@ -5,9 +5,11 @@ import fr.aredli.registrix.notification.dto.response.NotificationPageResponse;
 import fr.aredli.registrix.notification.dto.response.NotificationResponse;
 import fr.aredli.registrix.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/notification")
@@ -38,5 +40,15 @@ public class NotificationController {
 	@KafkaListener(topics = "registration", groupId = "notification")
 	public void listenRegistrationNotification(RegistrationNotification notification) {
 		notificationService.create(notification);
+	}
+	
+	@GetMapping(path = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public Flux<NotificationPageResponse> streamNotification(
+			@RequestParam(required = false, defaultValue = "0") int page,
+			@RequestParam(required = false, defaultValue = "20") int size,
+			@RequestParam(required = false, defaultValue = "updatedAt") String sortBy,
+			@RequestParam(required = false, defaultValue = "desc") String sortDirection
+	) {
+		return notificationService.getStream(page, size, sortBy, sortDirection);
 	}
 }

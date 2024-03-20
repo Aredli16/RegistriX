@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, ReactNode, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
+import { Dialog, Menu, Popover, Transition } from "@headlessui/react";
 import {
   Bars3CenterLeftIcon,
   BellIcon,
@@ -16,6 +16,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import { NotificationPage } from "@/@types/Notification";
 
 const LayoutWrapper = ({
   children,
@@ -26,6 +28,12 @@ const LayoutWrapper = ({
 }) => {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationPage>({
+    page: 0,
+    totalElements: 0,
+    totalPages: 0,
+    notifications: [],
+  });
 
   const navigation = [
     { name: "Dashboard", href: "/", icon: HomeIcon, current: pathname === "/" },
@@ -44,6 +52,43 @@ const LayoutWrapper = ({
       current: pathname === "/settings",
     },
   ];
+  const solutions = [
+    { name: "Analytics", href: "#" },
+    { name: "Engagement", href: "#" },
+    { name: "Security", href: "#" },
+    { name: "Integrations", href: "#" },
+    { name: "Automations", href: "#" },
+    { name: "Reports", href: "#" },
+  ];
+
+  useEffect(() => {
+    const eventSource = new EventSourcePolyfill(
+      "http://localhost:8080/notification/stream",
+      {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      },
+    );
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setNotifications(data);
+    };
+
+    eventSource.onerror = (event) => {
+      console.error(event);
+    };
+  }, [notifications, session?.access_token]);
+
+  const onNotificationRead = async (id: string) => {
+    await fetch(`http://localhost:8080/notification/read/${id}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+    });
+  };
 
   return (
     <>
@@ -240,14 +285,70 @@ const LayoutWrapper = ({
             </button>
             <div className="flex flex-1 justify-end px-4 sm:px-6 lg:mx-auto lg:px-8">
               <div className="ml-4 flex items-center md:ml-6">
-                <button
-                  type="button"
-                  className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
+                <Popover className="relative">
+                  <Popover.Button className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">View notifications</span>
+                    <BellIcon className="h-6 w-6" aria-hidden="true" />
+                    {notifications.totalElements > 0 &&
+                      notifications.notifications.some(
+                        (value) => value.status == "UNREAD",
+                      ) && (
+                        <span className="absolute top-0 right-0 block h-2.5 w-2.5 bg-red-400 rounded-full ring-2 ring-white" />
+                      )}
+                  </Popover.Button>
+
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 translate-y-1"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 translate-y-1"
+                  >
+                    <Popover.Panel className="absolute left-1/4 z-10 mt-5 flex w-screen max-w-min -translate-x-1/2 px-4">
+                      <div className="w-96 shrink rounded-xl bg-white p-4 text-sm font-semibold leading-6 text-gray-900 shadow-lg ring-1 ring-gray-900/5">
+                        {notifications.totalElements > 0 && (
+                          <>
+                            {notifications.notifications.map((value) => (
+                              <button
+                                onClick={() => onNotificationRead(value.id)}
+                                key={value.id}
+                                className="w-full p-2 flex items-center space-x-2 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+                              >
+                                <div className="flex-shrink-0">
+                                  <BellIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                </div>
+                                <div className="flex-1 text-start">
+                                  <p
+                                    className={
+                                      value.status == "UNREAD"
+                                        ? "text-gray-900"
+                                        : "text-gray-500"
+                                    }
+                                  >
+                                    {value.message}
+                                  </p>
+                                  <p className="text-gray-500">
+                                    <time dateTime={value.createdAt}>
+                                      {new Date(
+                                        value.createdAt,
+                                      ).toLocaleString()}
+                                    </time>
+                                  </p>
+                                </div>
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </div>
+                    </Popover.Panel>
+                  </Transition>
+                </Popover>
 
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
