@@ -22,10 +22,6 @@ class NotificationControllerTest extends ContainerTest {
 	@Autowired
 	private NotificationRepository notificationRepository;
 	
-	protected NotificationControllerTest() {
-		super("notification");
-	}
-	
 	@BeforeEach
 	void setUp() {
 		notificationRepository.deleteAll();

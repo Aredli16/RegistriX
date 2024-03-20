@@ -22,10 +22,6 @@ public class RegistrationControllerUserAuthSecurityTest extends ContainerTest {
 	@Autowired
 	private RegistrationRepository registrationRepository;
 	
-	protected RegistrationControllerUserAuthSecurityTest() {
-		super("registration");
-	}
-	
 	@Test
 	void getAll() {
 		ResponseEntity<ErrorHandler> response = getWithUserAuth("/registration", ErrorHandler.class);

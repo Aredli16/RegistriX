@@ -10,11 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class KeycloakUserControllerNoAuthTest extends ContainerTest {
-	
-	protected KeycloakUserControllerNoAuthTest() {
-		super("");
-	}
-	
 	@Test
 	void getAllUsers() {
 		ResponseEntity<Void> response = getWithoutAuth("/user", Void.class);

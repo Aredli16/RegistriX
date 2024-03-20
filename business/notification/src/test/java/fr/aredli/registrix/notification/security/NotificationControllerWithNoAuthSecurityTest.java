@@ -10,10 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class NotificationControllerWithNoAuthSecurityTest extends ContainerTest {
-	protected NotificationControllerWithNoAuthSecurityTest() {
-		super("notification");
-	}
-	
 	@Test
 	void getAllNotifications() {
 		ResponseEntity<Void> response = getWithoutAuth("/notification", Void.class);

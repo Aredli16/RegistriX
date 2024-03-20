@@ -12,11 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class KeycloakUserControllerTest extends ContainerTest {
-	
-	protected KeycloakUserControllerTest() {
-		super("");
-	}
-	
 	@Test
 	void getAllUsers() {
 		ResponseEntity<UserResponse[]> response = getWithAdminAuth("/user", UserResponse[].class);

@@ -20,31 +20,23 @@ import org.testcontainers.utility.DockerImageName;
 
 @Slf4j
 public abstract class ContainerTest {
-	protected static final String KEYCLOAK_CONTAINER_ADMIN_USERID = "1b530987-9b16-4632-9865-cb3cc65fc387";
-	protected static final String KEYCLOAK_CONTAINER_USER_USERID = "9a287f3b-49b0-4965-b5f6-e9b437dfc243";
 	protected static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:16.2");
 	protected static final KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer("quay.io/keycloak/keycloak:23.0");
 	protected static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
+	protected static final String KEYCLOAK_CONTAINER_ADMIN_USERID = "1b530987-9b16-4632-9865-cb3cc65fc387";
 	protected static final String KEYCLOAK_CONTAINER_ADMIN_USERNAME = "admin";
 	protected static final String KEYCLOAK_CONTAINER_ADMIN_PASSWORD = "admin";
+	protected static final String KEYCLOAK_CONTAINER_ADMIN_EMAIL = "admin@admin.com";
+	protected static final String KEYCLOAK_CONTAINER_USER_USERID = "9a287f3b-49b0-4965-b5f6-e9b437dfc243";
 	protected static final String KEYCLOAK_CONTAINER_USER_USERNAME = "user";
 	protected static final String KEYCLOAK_CONTAINER_USER_PASSWORD = "user";
-	protected static final String KEYCLOAK_CONTAINER_ADMIN_EMAIL = "admin@admin.com";
 	protected static final String KEYCLOAK_CONTAINER_USER_EMAIL = "user@user.com";
 	
-	protected final String databaseName;
-	@Autowired
-	private TestRestTemplate restTemplate;
-	
-	protected ContainerTest(String databaseName) {
-		this.databaseName = databaseName;
-		
+	static {
 		POSTGRE_SQL_CONTAINER
 				.withLogConsumer(new Slf4jLogConsumer(log))
-				.withDatabaseName(databaseName)
 				.withUsername("postgres")
 				.withPassword("postgres")
-				.withReuse(true)
 				.start();
 		
 		KEYCLOAK_CONTAINER
@@ -57,8 +49,12 @@ public abstract class ContainerTest {
 		
 		KAFKA_CONTAINER
 				.withLogConsumer(new Slf4jLogConsumer(log))
+				.withReuse(true)
 				.start();
 	}
+	
+	@Autowired
+	private TestRestTemplate restTemplate;
 	
 	@DynamicPropertySource
 	static void registerProperties(DynamicPropertyRegistry registry) {
